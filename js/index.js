@@ -146,18 +146,18 @@ function renderResult(data) {
     if (data.type === 'noun') {
         detailsHtml = `
             <div class="row">
-                <div class="col-6"><span class="text-white-50">Số nhiều (Plural):</span> <br><strong class="text-white">${data.details.plural || 'N/A'}</strong></div>
+                <div class="col-6"><span class="text-white-50">Plural:</span> <br><strong class="text-white">${data.details.plural || 'N/A'}</strong></div>
             </div>`;
     } else if (data.type === 'verb') {
         detailsHtml = `
             <div class="row g-2">
                 <div class="col-6"><span class="text-white-50">Infinitive:</span> <br><strong class="text-white">${data.details.infinitive}</strong></div>
-                <div class="col-6"><span class="text-white-50">Trợ động từ:</span> <br><strong class="text-white">${data.details.auxiliary_verb}</strong></div>
+                <div class="col-6"><span class="text-white-50">Hilfs:</span> <br><strong class="text-white">${data.details.auxiliary_verb}</strong></div>
                 <div class="col-6"><span class="text-white-50">Präteritum:</span> <br><strong class="text-white">${data.details.praeteritum}</strong></div>
                 <div class="col-6"><span class="text-white-50">Perfekt:</span> <br><strong class="text-white">${data.details.perfekt}</strong></div>
             </div>`;
     } else {
-        detailsHtml = `<div class="text-white-50">Tính từ / Trạng từ (Không có dạng biến đổi trong bảng chi tiết)</div>`;
+        detailsHtml = `<div class="text-white-50">Adjective / Adverb (No inflected forms in the detailed table)</div>`;
     }
     detailsContainer.innerHTML = detailsHtml;
 
@@ -178,75 +178,71 @@ async function fetchFromGeminiAndSave(query, currentDict) {
         return;
     }
 
-    const model = "gemini-2.5-flash"; // hoặc "gemini-1.5-pro"
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-    try {
-        // 1. Thực hiện lệnh gọi API bằng POST
-        const geminiPrompt = `You are a strict backend API that outputs only raw JSON. Your task is to analyze the German word "${query}" and return its dictionary details.
-        Do not include any conversational text, introductions, or warnings.
-        Do not wrap the response in markdown code blocks like \`\`\`json ... \`\`\`. 
-        Return ONLY the raw JSON string matching this exact structure:
+    const modelList = [
+        "gemini-3.5-flash",
+        "gemini-2.5-flash",
+        "gemini-2.0-flash"
+    ];
+    
+    const geminiPrompt = `Analyze "${query}". Return ONLY raw JSON (no markdown, no text):
+    {
+    "word": "Capitalized German word",
+    "type": "noun|verb|adjective",
+    "pronunciation": "/IPA/",
+    "meaning_en": "English meaning",
+    "details": {
+        "article": "der/die/das or ''",
+        "plural": "Plural or ''",
+        "infinitive": "Inf. or ''",
+        "praeteritum": "Prät. or ''",
+        "perfekt": "Perfekt or ''",
+        "auxiliary_verb": "haben/sein or ''"
+    },
+    "example_de": "Contextual sentence",
+    "example_en": "Translation"
+    }
 
-        {
-        "word": "The correct German word with proper capitalization (e.g., 'Hund', 'gehen', 'schön')",
-        "type": "Must be exactly one of these: 'noun' | 'verb' | 'adjective'",
-        "pronunciation": "The international IPA pronunciation (e.g., '/hʊnt/')",
-        "meaning_en": "Clear English translation",
-        "details": {
-            "article": "Only for nouns: 'der' | 'die' | 'das'. For verbs/adjectives use ''",
-            "plural": "Only for nouns: The plural form (e.g., 'Hunde'). For verbs/adjectives use ''",
-            "infinitive": "Only for verbs: The infinitive form (e.g., 'gehen'). For nouns/adjectives use ''",
-            "praeteritum": "Only for verbs: The Präteritum form (e.g., 'ging'). For nouns/adjectives use ''",
-            "perfekt": "Only for verbs: The full Perfekt form (e.g., 'ist gegangen', 'hat gekauft'). For nouns/adjectives use ''",
-            "auxiliary_verb": "Only for verbs: Must be 'haben' or 'sein'. For nouns/adjectives use ''"
-        },
-        "example_de": "A natural, contextual example sentence in German using the word",
-        "example_en": "The English translation of the example sentence"
+    Rules:
+    - noun: fill article, plural. Verb fields = ''.
+    - verb: fill infinitive, praeteritum, perfekt, auxiliary_verb. Noun fields = ''.
+    - adj: all details fields = ''.
+    - STRICT: Return NO formatting, NO explanation, raw JSON ONLY.`;
+
+
+    for (const model of modelList){
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+        try {
+            // 1. Thực hiện lệnh gọi API bằng POST
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-goog-api-key': GEMINI_API_KEY
+                    
+                },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: geminiPrompt }] }],
+                    generationConfig: { responseMimeType: "application/json" }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Gemini API báo lỗi hệ thống: ${response.status}`);
+            }
+            const jsonResult = await response.json();
+            const rawTextFromGemini = jsonResult.candidates[0].content.parts[0].text;
+            const newWordData = JSON.parse(rawTextFromGemini);
+
+            renderResult(newWordData);
+            saveGeminiWordToGitHub(newWordData);
+
+            break;
+        } catch (error) {
+            console.error("Quá trình gọi Gemini bị crash:", error);
+            searchLoader.style.display = 'none';
         }
-
-        Strict Rules:
-        1. If the word is a 'noun', fill 'article' and 'plural'. Leave verb fields inside 'details' as ''.
-        2. If the word is a 'verb', fill 'infinitive', 'praeteritum', 'perfekt', and 'auxiliary_verb'. Leave noun fields inside 'details' as ''.
-        3. If the word is an 'adjective', leave all fields inside 'details' as ''.`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-goog-api-key': GEMINI_API_KEY
-                
-            },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: geminiPrompt }] }],
-                generationConfig: { responseMimeType: "application/json" }
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Gemini API báo lỗi hệ thống: ${response.status}`);
-        }
-
-        const jsonResult = await response.json();
         
-        // 2. Bóc tách tầng tầng lớp lớp để lấy chuỗi JSON thô từ Gemini
-        const rawTextFromGemini = jsonResult.candidates[0].content.parts[0].text;
-        
-        console.log("Chuỗi JSON thô từ AI:", rawTextFromGemini);
-
-        // 3. Ép chuỗi đó thành Object JavaScript để chuẩn bị nạp vào dict.json
-        const newWordData = JSON.parse(rawTextFromGemini);
-
-        // Giờ ông đã có biến newWordData chuẩn chỉnh cấu hình, mang đi render hoặc save thôi!
-        console.log("Object đã parse thành công:", newWordData);
-        
-        // Gọi hàm render ra màn hình luôn
-        renderResult(newWordData);
-
-        saveGeminiWordToGitHub(newWordData);
-
-    } catch (error) {
-        console.error("Quá trình gọi Gemini bị crash:", error);
-        alert("Không thể lấy dữ liệu từ Gemini, check lại tab Console xem sao ông nhé!");
-        searchLoader.style.display = 'none';
     }
 }
 
@@ -451,7 +447,7 @@ function renderFlashcardContent(data) {
         detailsEl.innerHTML = `
             <div class="row g-1">
                 <div class="col-6">Infinitive: <span class="text-white fw-semibold">${data.details.infinitive || data.word}</span></div>
-                <div class="col-6">Trợ động từ: <span class="text-white fw-semibold">${data.details.auxiliary_verb || 'N/A'}</span></div>
+                <div class="col-6">Hilfs: <span class="text-white fw-semibold">${data.details.auxiliary_verb || 'N/A'}</span></div>
                 <div class="col-6">Präteritum: <span class="text-white fw-semibold">${data.details.praeteritum || 'N/A'}</span></div>
                 <div class="col-6">Perfekt: <span class="text-white fw-semibold">${data.details.perfekt || 'N/A'}</span></div>
             </div>`;

@@ -33,7 +33,10 @@
             --bs-text-opacity: 1;
             color: rgb(201, 226, 249) !important;
         }
-        
+        .text-grey-custom {
+            --bs-text-opacity: 1;
+            color: rgb(74, 79, 85) !important;
+        }
         /* CSS tạo hiệu ứng lật Flashcard kiểu Quizlet */
         .flashcard-wrapper {
             perspective: 1000px;
@@ -210,7 +213,7 @@
         <div id="search-tab" class="w-100 text-center tab-content" style="max-width: 600px;">
             <h3 class="mb-4 fw-bold">🔍 German vocabulary lookup</h3>
             <div class="input-group mb-3 shadow-lg">
-                <input type="text" id="searchInput" class="form-control bg-white-custom text-black border-0 py-3" placeholder="Type to search (z.B. Katze, Auto)...">
+                <input type="text" id="searchInput" class="form-control bg-white-custom text-grey-custom border-0 py-3" placeholder="Type to search (z.B. Katze, Auto)...">
                 <button id="searchBtn" class="btn btn-warning px-4" type="button"><i class="bi bi-search"></i> Search</button>
             </div>
             <p class="text-white-custom">Enter vocabulary to quickly see the meaning, gender (article), and conjugation.</p>
@@ -235,7 +238,7 @@
                 <div id="res-details-container" class="bg-dark p-3 rounded mb-3 border border-secondary">
                     </div>
 
-                <div class="result-section-title">Ví dụ (Beispiel)</div>
+                <div class="result-section-title">Beispiel</div>
                 <p id="res-example-de" class="mb-1 fw-semibold text-white"></p>
                 <p id="res-example-en" class="text-white-50 fst-italic mb-0"></p>
             </div>
