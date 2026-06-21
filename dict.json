@@ -1,0 +1,98 @@
+[
+  {
+    "word": "Hund",
+    "type": "noun",
+    "pronunciation": "/hʊnt/",
+    "meaning_en": "dog",
+    "details": {
+      "article": "der",
+      "plural": "Hunde",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Der Hund bellt im Garten.",
+    "example_en": "The dog is barking in the garden."
+  },
+  {
+    "word": "Katze",
+    "type": "noun",
+    "pronunciation": "/ˈkat͡sə/",
+    "meaning_en": "cat",
+    "details": {
+      "article": "die",
+      "plural": "Katzen",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Die Katze schläft auf dem Sofa.",
+    "example_en": "The cat is sleeping on the sofa."
+  },
+  {
+    "word": "Auto",
+    "type": "noun",
+    "pronunciation": "/ˈaʊ̯to/",
+    "meaning_en": "car",
+    "details": {
+      "article": "das",
+      "plural": "Autos",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Mein neues Auto ist rot.",
+    "example_en": "My new car is red."
+  },
+  {
+    "word": "gehen",
+    "type": "verb",
+    "pronunciation": "/ˈɡeːən/",
+    "meaning_en": "to go / walk",
+    "details": {
+      "article": "",
+      "plural": "",
+      "infinitive": "gehen",
+      "praeteritum": "ging",
+      "perfekt": "ist gegangen",
+      "auxiliary_verb": "sein"
+    },
+    "example_de": "Wir gehen heute ins Kino.",
+    "example_en": "We are going to the cinema today."
+  },
+  {
+    "word": "machen",
+    "type": "verb",
+    "pronunciation": "/ˈmaxn̩/",
+    "meaning_en": "to do / make",
+    "details": {
+      "article": "",
+      "plural": "",
+      "infinitive": "machen",
+      "praeteritum": "machte",
+      "perfekt": "hat gemacht",
+      "auxiliary_verb": "haben"
+    },
+    "example_de": "Was machst du am Wochenende?",
+    "example_en": "What are you doing at the weekend?"
+  },
+  {
+    "word": "schön",
+    "type": "adjective",
+    "pronunciation": "/ʃøːn/",
+    "meaning_en": "beautiful / nice",
+    "details": {
+      "article": "",
+      "plural": "",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Das Wetter hôm nay thật là schön.",
+    "example_en": "The weather today is really beautiful."
+  }
+]
