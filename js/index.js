@@ -7,43 +7,83 @@ const searchBtn = document.getElementById('searchBtn');
 const searchResultBox = document.getElementById('search-result');
 const searchLoader = document.getElementById('search-loader');
 
+const GITHUB_OWNER = localStorage.getItem("GIT_USERNAME");
+const GITHUB_REPO = localStorage.getItem("GIT_REPO");
+const FILE_PATH = 'dict.json'; 
+const GITHUB_TOKEN = localStorage.getItem("GIT")
+
+let globalDict = {};         // Chứa toàn bộ Object Map từ dict.json
+let currentFlashcardData = null; // Dữ liệu của từ đang hiển thị trên card
+let flashcardFilter = 'all'; // Bộ lọc từ loại hiện tại: 'all' | 'noun' | 'verb' | 'adjective'
+let recentWordsQueue = [];   // Hàng đợi lưu các từ vừa xem để tránh lặp lại ngay lập tức
+
 // Bắt sự kiện khi bấm nút Tìm kiếm hoặc Enter
 searchBtn.addEventListener('click', handleSearch);
 searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') handleSearch();
 });
 
+// async function handleSearch() {
+//     const query = searchInput.value.trim().toLowerCase();
+//     if (!query) return;
+
+//     // Ẩn kết quả cũ, hiện loader
+//     searchResultBox.style.display = 'none';
+//     searchLoader.style.display = 'block';
+
+//     try {
+//         // 1. Fetch file dict.json hiện tại
+//         // Đổi đường dẫn này thành link raw github nếu ông để dict trên github
+//         const response = await fetch('dict.json'); 
+//         let dict = [];
+//         if (response.ok) {
+//             dict = await response.json();
+//         }
+
+//         // 2. Tìm từ trong từ điển (tìm không phân biệt hoa thường)
+//         const foundWord = dict.find(item => item.word.toLowerCase() === query);
+
+//         if (foundWord) {
+//             // Có trong từ điển -> Render luôn
+//             renderResult(foundWord);
+//         } else {
+//             // Không có -> Gọi Gemini tạo data mới và update lên Github
+//             console.log(`Từ "${query}" chưa có. Đang gọi Gemini API...`);
+//             await fetchFromGeminiAndSave(query, dict);
+//         }
+//     } catch (error) {
+//         console.error("Lỗi quá trình tìm kiếm:", error);
+//         alert("Có lỗi xảy ra khi đọc từ điển!");
+//         searchLoader.style.display = 'none';
+//     }
+// }
+
+
 async function handleSearch() {
     const query = searchInput.value.trim().toLowerCase();
     if (!query) return;
 
-    // Ẩn kết quả cũ, hiện loader
     searchResultBox.style.display = 'none';
     searchLoader.style.display = 'block';
 
     try {
-        // 1. Fetch file dict.json hiện tại
-        // Đổi đường dẫn này thành link raw github nếu ông để dict trên github
-        const response = await fetch('dict.json'); 
-        let dict = [];
-        if (response.ok) {
-            dict = await response.json();
-        }
-
-        // 2. Tìm từ trong từ điển (tìm không phân biệt hoa thường)
-        const foundWord = dict.find(item => item.word.toLowerCase() === query);
+        // CÁCH TÌM KIẾM BẤT TỬ (BULLETPROOF): 
+        // Quét thẳng vào thuộc tính "word" của tất cả các từ, ép về chữ thường để so sánh.
+        // Bất chấp cái key bên ngoài (từ_khóa) ông lưu viết hoa hay thường nó đều mò ra được hết!
+        const foundWord = Object.values(globalDict).find(
+            item => item && item.word && item.word.toLowerCase() === query
+        );
 
         if (foundWord) {
-            // Có trong từ điển -> Render luôn
+            console.log(`Đã tìm thấy từ "${query}" trong dữ liệu hiện tại!`);
             renderResult(foundWord);
         } else {
-            // Không có -> Gọi Gemini tạo data mới và update lên Github
-            console.log(`Từ "${query}" chưa có. Đang gọi Gemini API...`);
-            await fetchFromGeminiAndSave(query, dict);
+            console.log(`Từ "${query}" thật sự chưa có. Đang gọi Gemini API...`);
+            await fetchFromGeminiAndSave(query);
         }
     } catch (error) {
         console.error("Lỗi quá trình tìm kiếm:", error);
-        alert("Có lỗi xảy ra khi đọc từ điển!");
+        alert("Có lỗi xảy ra khi xử lý tìm kiếm!");
         searchLoader.style.display = 'none';
     }
 }
@@ -138,7 +178,7 @@ async function fetchFromGeminiAndSave(query, currentDict) {
         return;
     }
 
-    const model = "gemini-3.5-flash"; // hoặc "gemini-1.5-pro"
+    const model = "gemini-2.5-flash"; // hoặc "gemini-1.5-pro"
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
     try {
         // 1. Thực hiện lệnh gọi API bằng POST
@@ -242,10 +282,7 @@ function switchTab(tabId) {
 // ==========================================
 // 1. BIẾN TOÀN CỤC (GLOBAL VARIABLES)
 // ==========================================
-let globalDict = {};         // Chứa toàn bộ Object Map từ dict.json
-let currentFlashcardData = null; // Dữ liệu của từ đang hiển thị trên card
-let flashcardFilter = 'all'; // Bộ lọc từ loại hiện tại: 'all' | 'noun' | 'verb' | 'adjective'
-let recentWordsQueue = [];   // Hàng đợi lưu các từ vừa xem để tránh lặp lại ngay lập tức
+
 
 // ==========================================
 // 2. KHỞI CHẠY ỨNG DỤG (INIT)
@@ -261,17 +298,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // Hàm fetch file dict.json từ local server
+// async function loadDictionary() {
+//     try {
+//         const response = await fetch('dict.json');
+//         if (!response.ok) {
+//             throw new Error("Không thể tải file dict.json");
+//         }
+//         globalDict = await response.json();
+//         console.log("Đã nạp thành công kho từ vựng:", Object.keys(globalDict).length, "từ.");
+//     } catch (error) {
+//         console.error("Lỗi nạp từ điển:", error);
+//         alert("Không tìm thấy hoặc lỗi file dict.json rồi ông ơi!");
+//     }
+// }
+
+
 async function loadDictionary() {
+    // Đọc thẳng file RAW từ Github để lấy dữ liệu Real-time
+    const rawFileUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/${FILE_PATH}`;
+    
     try {
-        const response = await fetch('dict.json');
-        if (!response.ok) {
-            throw new Error("Không thể tải file dict.json");
-        }
+        const response = await fetch(`${rawFileUrl}?t=${new Date().getTime()}`);
+        if (!response.ok) throw new Error("Không thể tải file từ Github");
+        
         globalDict = await response.json();
-        console.log("Đã nạp thành công kho từ vựng:", Object.keys(globalDict).length, "từ.");
+
+        console.log(globalDict)
+        console.log("Đã nạp thành công kho từ vựng từ GitHub:", Object.keys(globalDict).length, "từ.");
     } catch (error) {
-        console.error("Lỗi nạp từ điển:", error);
-        alert("Không tìm thấy hoặc lỗi file dict.json rồi ông ơi!");
+        console.error("Lỗi nạp từ Github, đọc local dự phòng:", error);
+        const localResponse = await fetch('dict.json');
+        globalDict = await localResponse.json();
     }
 }
 
@@ -377,7 +434,7 @@ function renderFlashcardContent(data) {
     }
     
     frontWord.textContent = data.word;
-    frontType.textContent = data.type === 'noun' ? 'Danh từ' : data.type === 'verb' ? 'Động từ' : 'Tính từ';
+    frontType.textContent = data.type;
 
     // --- CẬP NHẬT MẶT SAU ---
     document.getElementById('fc-back-word').textContent = data.word;
@@ -406,37 +463,68 @@ function renderFlashcardContent(data) {
 // ==========================================
 // 5. TÍNH NĂNG PHÁT ÂM (AUDIO)
 // ==========================================
-function speakFlashcard(event) {
-    // CHẶN TUYỆT ĐỐI không cho sự kiện click lan ra ngoài làm lật card khi bấm nút loa
-    event.stopPropagation(); 
+// function speakFlashcard(event) {
+//     // CHẶN TUYỆT ĐỐI không cho sự kiện click lan ra ngoài làm lật card khi bấm nút loa
+//     event.stopPropagation(); 
     
+//     if (!currentFlashcardData) return;
+
+//     if ('speechSynthesis' in window) {
+//         window.speechSynthesis.cancel(); // Ngắt các giọng đang đọc dở (nếu có)
+        
+//         // Nếu là danh từ thì đọc kèm mạo từ cho chuẩn ngữ điệu Đức (Vd: "der Hund")
+//         const textToSpeak = (currentFlashcardData.type === 'noun' && currentFlashcardData.details.article) 
+//             ? `${currentFlashcardData.details.article} ${currentFlashcardData.word}` 
+//             : currentFlashcardData.word;
+
+//         const utterance = new SpeechSynthesisUtterance(textToSpeak);
+//         utterance.lang = 'de-DE'; // Thiết lập chuẩn giọng Đức
+//         utterance.rate = 0.85;    // Tốc độ đọc chậm một chút cho dễ nghe âm đuôi
+        
+//         window.speechSynthesis.speak(utterance);
+//     } else {
+//         alert("Trình duyệt này không hỗ trợ phát âm tự động rồi ông ơi!");
+//     }
+// }
+
+function speakFlashcard(event) {
+    event.stopPropagation(); 
     if (!currentFlashcardData) return;
 
     if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // Ngắt các giọng đang đọc dở (nếu có)
+        window.speechSynthesis.cancel(); 
         
-        // Nếu là danh từ thì đọc kèm mạo từ cho chuẩn ngữ điệu Đức (Vd: "der Hund")
         const textToSpeak = (currentFlashcardData.type === 'noun' && currentFlashcardData.details.article) 
             ? `${currentFlashcardData.details.article} ${currentFlashcardData.word}` 
             : currentFlashcardData.word;
 
         const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        utterance.lang = 'de-DE'; // Thiết lập chuẩn giọng Đức
-        utterance.rate = 0.85;    // Tốc độ đọc chậm một chút cho dễ nghe âm đuôi
+        
+        // 1. Lấy danh sách giọng đọc của máy
+        const voices = window.speechSynthesis.getVoices();
+        
+        // 2. Ưu tiên tìm giọng có chứa "Google" hoặc "Microsoft" và có lang là "de-DE"
+        // Thường giọng Google (trên Chrome) phát âm chuẩn nhất
+        const germanVoice = voices.find(voice => voice.lang === 'de-DE') || 
+                            voices.find(voice => voice.lang.includes('de'));
+
+        if (germanVoice) {
+            utterance.voice = germanVoice;
+        }
+
+        utterance.lang = 'de-DE';
+        utterance.rate = 0.85;
         
         window.speechSynthesis.speak(utterance);
     } else {
-        alert("Trình duyệt này không hỗ trợ phát âm tự động rồi ông ơi!");
+        alert("Trình duyệt này không hỗ trợ phát âm!");
     }
 }
 
 
 
 // Cấu hình thông tin GitHub của ông (Thay bằng thông tin thật nhé)
-const GITHUB_OWNER = localStorage.getItem("GIT_USERNAME");
-const GITHUB_REPO = localStorage.getItem("GIT_REPO");
-const FILE_PATH = 'dict.json'; 
-const GITHUB_TOKEN = localStorage.getItem("GIT")
+
 
 /**
  * Hàm chính: Nhận dữ liệu từ Gemini, gộp vào bộ nhớ tạm và đẩy lên GitHub
@@ -456,7 +544,13 @@ async function saveGeminiWordToGitHub(newWordData) {
 
     // 2. Chuẩn hóa key (viết thường, xóa khoảng trắng) và gộp vào kho dữ liệu chạy tạm ở máy
     const wordKey = newWordData.word.toLowerCase().trim();
-    globalDict[wordKey] = newWordData; 
+    
+    globalDict.push(newWordData); 
+    
+
+    console.log("Địa chỉ vùng nhớ của globalDict:", globalDict);
+// Kiểm tra xem trong object này có chứa cái wordKey ông vừa thêm không?
+    console.log("Kiểm tra sự tồn tại của từ mới:", globalDict.hasOwnProperty(wordKey));
 
     // 3. Tiến hành luồng gọi API GitHub để ghi đè file dict.json
     const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`;
@@ -482,7 +576,7 @@ async function saveGeminiWordToGitHub(newWordData) {
         // --- BƯỚC B: MÃ HÓA TOÀN BỘ KHO TỪ ĐIỂN MỚI SANG BASE64 ---
         // Chuyển Object globalDict sau khi đã có từ mới thành chuỗi JSON viết thụt lề cho đẹp
         const jsonString = JSON.stringify(globalDict, null, 2);
-        
+
         // Mã hóa an toàn UTF-8 để không lỗi font tiếng Đức (ä, ö, ü, ß)
         const base64Content = btoa(encodeURIComponent(jsonString).replace(/%([0-9A-F]{2})/g, (match, p1) => {
             return String.fromCharCode('0x' + p1);
@@ -512,8 +606,8 @@ async function saveGeminiWordToGitHub(newWordData) {
         });
 
         if (putResponse.ok) {
-            console.log(`Đã đồng bộ thành công từ "${newWordData.word}" lên GitHub!`);
-            alert(`Đã thêm thành công từ "${newWordData.word}" vào từ điển rực rỡ nhé!`);
+            //console.log(`Đã đồng bộ thành công từ "${newWordData.word}" lên GitHub!`);
+            // alert(`Đã thêm thành công từ "${newWordData.word}" vào từ điển rực rỡ nhé!`);
             
             // (Tùy chọn) Nếu đang mở tab Flashcard, nạp luôn từ mới này ra màn hình để học luôn
             // currentFlashcardData = newWordData;
