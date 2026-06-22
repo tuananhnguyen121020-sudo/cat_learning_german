@@ -158,5 +158,21 @@
     },
     "example_de": "Das Bild hängt an der Wand.",
     "example_en": "The picture is hanging on the wall."
+  },
+  {
+    "word": "ziehen",
+    "type": "verb",
+    "pronunciation": "/ˈtsiːən/",
+    "meaning_en": "to pull, to draw, to drag, to move, to migrate, to grow",
+    "details": {
+      "article": "",
+      "plural": "",
+      "infinitive": "ziehen",
+      "praeteritum": "zog",
+      "perfekt": "gezogen",
+      "auxiliary_verb": "haben"
+    },
+    "example_de": "Er hat den Stuhl näher an den Tisch gezogen.",
+    "example_en": "He pulled the chair closer to the table."
   }
 ]
