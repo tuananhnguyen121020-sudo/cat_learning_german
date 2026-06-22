@@ -160,19 +160,19 @@
     "example_en": "The picture is hanging on the wall."
   },
   {
-    "word": "ziehen",
+    "word": "anziehen",
     "type": "verb",
-    "pronunciation": "/ˈtsiːən/",
-    "meaning_en": "to pull, to draw, to drag, to move, to migrate, to grow",
+    "pronunciation": "/ˈanˌt͡siːən/",
+    "meaning_en": "to put on (clothes), to attract",
     "details": {
       "article": "",
       "plural": "",
-      "infinitive": "ziehen",
-      "praeteritum": "zog",
-      "perfekt": "gezogen",
+      "infinitive": "anziehen",
+      "praeteritum": "zog an",
+      "perfekt": "angezogen",
       "auxiliary_verb": "haben"
     },
-    "example_de": "Er hat den Stuhl näher an den Tisch gezogen.",
-    "example_en": "He pulled the chair closer to the table."
+    "example_de": "Zieh dir bitte eine warme Jacke an.",
+    "example_en": "Please put on a warm jacket."
   }
 ]
