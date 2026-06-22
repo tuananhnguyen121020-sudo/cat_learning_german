@@ -126,5 +126,21 @@
     },
     "example_de": "Es gibt heute viel Verkehr auf den Straßen.",
     "example_en": "There is a lot of traffic on the streets today."
+  },
+  {
+    "word": "und",
+    "type": "conjunction",
+    "pronunciation": "/ʊnt/",
+    "meaning_en": "and",
+    "details": {
+      "article": "",
+      "plural": "",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Du und ich gehen heute ins Kino.",
+    "example_en": "You and I are going to the cinema today."
   }
 ]
