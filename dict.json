@@ -96,67 +96,19 @@
     "example_en": "The weather today is really beautiful."
   },
   {
-    "word": "Rauchverbot",
+    "word": "Verkehr",
     "type": "noun",
-    "pronunciation": "/ˈʁaʊ̯xfɛɐ̯ˌboːt/",
-    "meaning_en": "smoking ban",
-    "details": {
-      "article": "das",
-      "plural": "Rauchverbote",
-      "infinitive": "",
-      "praeteritum": "",
-      "perfekt": "",
-      "auxiliary_verb": ""
-    },
-    "example_de": "In deutschen Restaurants gilt ein generelles Rauchverbot.",
-    "example_en": "A general smoking ban applies in German restaurants."
-  },
-  {
-    "word": "Kneipe",
-    "type": "noun",
-    "pronunciation": "/ˈknaɪ̯pə/",
-    "meaning_en": "pub, bar, inn",
-    "details": {
-      "article": "die",
-      "plural": "Kneipen",
-      "infinitive": "",
-      "praeteritum": "",
-      "perfekt": "",
-      "auxiliary_verb": ""
-    },
-    "example_de": "Lasst uns heute Abend in die Kneipe gehen.",
-    "example_en": "Let's go to the pub tonight."
-  },
-  {
-    "word": "Kneipe",
-    "type": "noun",
-    "pronunciation": "/ˈknaɪ̯pə/",
-    "meaning_en": "pub, tavern, bar",
-    "details": {
-      "article": "die",
-      "plural": "Kneipen",
-      "infinitive": "",
-      "praeteritum": "",
-      "perfekt": "",
-      "auxiliary_verb": ""
-    },
-    "example_de": "Wir gehen heute Abend auf ein Bier in die Kneipe.",
-    "example_en": "We are going to the pub tonight for a beer."
-  },
-  {
-    "word": "Tipp",
-    "type": "noun",
-    "pronunciation": "/tɪp/",
-    "meaning_en": "tip; piece of advice; hint",
+    "pronunciation": "/fɛɐ̯ˈkeːɐ̯/",
+    "meaning_en": "traffic; transport; communication; intercourse",
     "details": {
       "article": "der",
-      "plural": "Tipps",
+      "plural": "Verkehre",
       "infinitive": "",
       "praeteritum": "",
       "perfekt": "",
       "auxiliary_verb": ""
     },
-    "example_de": "Ich habe einen guten Tipp für dich.",
-    "example_en": "I have a good tip for you."
+    "example_de": "Der Verkehr in der Stadt ist am Morgen immer sehr dicht.",
+    "example_en": "The traffic in the city is always very heavy in the morning."
   }
 ]
