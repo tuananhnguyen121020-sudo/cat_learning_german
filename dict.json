@@ -126,5 +126,37 @@
     },
     "example_de": "Lasst uns heute Abend in die Kneipe gehen.",
     "example_en": "Let's go to the pub tonight."
+  },
+  {
+    "word": "Kneipe",
+    "type": "noun",
+    "pronunciation": "/ˈknaɪ̯pə/",
+    "meaning_en": "pub, tavern, bar",
+    "details": {
+      "article": "die",
+      "plural": "Kneipen",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Wir gehen heute Abend auf ein Bier in die Kneipe.",
+    "example_en": "We are going to the pub tonight for a beer."
+  },
+  {
+    "word": "Tipp",
+    "type": "noun",
+    "pronunciation": "/tɪp/",
+    "meaning_en": "tip; piece of advice; hint",
+    "details": {
+      "article": "der",
+      "plural": "Tipps",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Ich habe einen guten Tipp für dich.",
+    "example_en": "I have a good tip for you."
   }
 ]
