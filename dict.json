@@ -110,5 +110,21 @@
     },
     "example_de": "Der Verkehr in der Stadt ist am Morgen immer sehr dicht.",
     "example_en": "The traffic in the city is always very heavy in the morning."
+  },
+  {
+    "word": "Verkehr",
+    "type": "noun",
+    "pronunciation": "/fɛɐ̯ˈkeːɐ̯/",
+    "meaning_en": "traffic, transport",
+    "details": {
+      "article": "der",
+      "plural": "Verkehre",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Es gibt heute viel Verkehr auf den Straßen.",
+    "example_en": "There is a lot of traffic on the streets today."
   }
 ]
