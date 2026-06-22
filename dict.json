@@ -94,5 +94,21 @@
     },
     "example_de": "Das Wetter hôm nay thật là schön.",
     "example_en": "The weather today is really beautiful."
+  },
+  {
+    "word": "Rauchverbot",
+    "type": "noun",
+    "pronunciation": "/ˈʁaʊ̯xfɛɐ̯ˌboːt/",
+    "meaning_en": "smoking ban",
+    "details": {
+      "article": "das",
+      "plural": "Rauchverbote",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "In deutschen Restaurants gilt ein generelles Rauchverbot.",
+    "example_en": "A general smoking ban applies in German restaurants."
   }
 ]
