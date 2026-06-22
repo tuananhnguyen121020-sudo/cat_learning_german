@@ -110,5 +110,21 @@
     },
     "example_de": "In deutschen Restaurants gilt ein generelles Rauchverbot.",
     "example_en": "A general smoking ban applies in German restaurants."
+  },
+  {
+    "word": "Kneipe",
+    "type": "noun",
+    "pronunciation": "/ˈknaɪ̯pə/",
+    "meaning_en": "pub, bar, inn",
+    "details": {
+      "article": "die",
+      "plural": "Kneipen",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Lasst uns heute Abend in die Kneipe gehen.",
+    "example_en": "Let's go to the pub tonight."
   }
 ]
