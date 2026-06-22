@@ -142,5 +142,21 @@
     },
     "example_de": "Du und ich gehen heute ins Kino.",
     "example_en": "You and I are going to the cinema today."
+  },
+  {
+    "word": "Wand",
+    "type": "noun",
+    "pronunciation": "/vant/",
+    "meaning_en": "wall",
+    "details": {
+      "article": "die",
+      "plural": "Wände",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Das Bild hängt an der Wand.",
+    "example_en": "The picture is hanging on the wall."
   }
 ]
