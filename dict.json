@@ -174,5 +174,21 @@
     },
     "example_de": "Zieh dir bitte eine warme Jacke an.",
     "example_en": "Please put on a warm jacket."
+  },
+  {
+    "word": "Flughafen",
+    "type": "noun",
+    "pronunciation": "/ˈfluːkˌhaːfn̩/",
+    "meaning_en": "airport",
+    "details": {
+      "article": "der",
+      "plural": "Flughäfen",
+      "infinitive": "",
+      "praeteritum": "",
+      "perfekt": "",
+      "auxiliary_verb": ""
+    },
+    "example_de": "Der Flughafen in Frankfurt ist einer der größten der Welt.",
+    "example_en": "The airport in Frankfurt is one of the largest in the world."
   }
 ]
